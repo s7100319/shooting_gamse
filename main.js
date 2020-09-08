@@ -23,6 +23,14 @@ var charainfo;
 var shootingGame;
 var t = 1;
 var gameInfo;
+var audioLaser;
+var audioCharaOver;
+var audioEnemyDamage;
+var audioEnemyshot;
+var audioBossDamage;
+var audioBossOver;
+var sound;
+
 
 // - const --------------------------------------------------------------------
 var chara_shot_max = 10;
@@ -65,6 +73,16 @@ window.onload = function(){
 
 //------elements-------------
   info = document.getElementById("info");
+
+//------effect sound---------
+  audioLaser = new Audio("laser2.mp3")
+  audioCharaOver = new Audio("game_explosion1.mp3")
+  audioEnemyDamage = new Audio("damage6.mp3")
+  audioEnemyshot = new Audio("shoot4.mp3")
+  audioBossDamage = new Audio("damage1.mp3")
+  audioBossOver = new Audio("game_explosion7.mp3")
+
+
 
 //-----chara--initial--------
   var chara = new Character();
@@ -140,7 +158,6 @@ function shootingGame(turn){
           cs_p.x = chara.position.x + 80;
           cs_p.y = chara.position.y - 25;
           charashot[i].set(cs_p, 25, 10)
-
           break;
         }
       }
@@ -154,6 +171,7 @@ function shootingGame(turn){
     for(i = 0; i < chara_shot_max; i++){
       if(charashot[i].alive){
         charashot[i].move();
+
         ctx.drawImage(charaShotImg, charashot[i].position.x , charashot[i].position.y);
       }
     }
@@ -212,6 +230,7 @@ function shootingGame(turn){
           if(enemy[i].param % Math.floor((80 / t)) === 0){
             for(j = 0; j < enemy_shot_count; j++){
               if(!enemyshot[j].alive){
+                audioEnemyshot.play();
                 p = enemy[i].position.distance(chara.position);
                 p.normalize();
                 enemyshot[j].set(enemy[i].position, p, 50, 5)
@@ -240,7 +259,7 @@ function shootingGame(turn){
             if(c_e_p.length() < 50){
               enemy[j].alive = false;
               charashot[i].alive = false;
-
+              audioEnemyDamage.play();
               score += 100;
 
               break;
@@ -267,6 +286,7 @@ function shootingGame(turn){
       if(bossbit[i].param % Math.floor((200 / t)) === 0){
         for(j = 0; j < enemy_shot_count; j++){
           if(!enemyshot[j].alive){
+            audioEnemyshot.play();
             p = bossbit[i].position.distance(chara.position);
             p.normalize();
             enemyshot[j].set(bossbit[i].position, p, 50, 5)
@@ -306,6 +326,7 @@ function shootingGame(turn){
           if(bossbit[j].alive){
           p = bossbit[j].position.distance(charashot[i].position);
           if(p.length() < 50){
+           audioEnemyDamage.play();
            bossbit[j].life--;
            charashot[i].alive = false;
             if(bossbit[j].life < 0){
@@ -319,9 +340,11 @@ function shootingGame(turn){
           if(boss.alive){
             p = boss.position.distance(charashot[i].position);
             if(p.length() < 100){
+              audioBossDamage.play();
               boss.life--;
               charashot[i].alive = false;
               if(boss.life < 0){
+                audioBossOver.play();
                 score += 1000;
                 for(k = 0; k < 5; k++){
                 boss.alive = false;
@@ -340,6 +363,7 @@ function shootingGame(turn){
     if(enemyshot[i].alive){
       p = enemyshot[i].position.distance(chara.position)
       if(p.length() < 80){
+        audioCharaOver.play();
         chara.alive = false;
         run = false;
         message = 'Game Over!!!'
@@ -411,5 +435,10 @@ function keyDown(event){
 }
 
 function mouseDown(event){
-  fire = true;
+  if(true){
+    audioLaser.pause();
+    audioLaser.currentTime = 0;
+    audioLaser.play();
+    fire = true;
+ }
 }

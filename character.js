@@ -8,6 +8,7 @@ Character.prototype.init = function(size){
 };
 
 function CharacterShot(){
+  this.time = 0;
   this.position = new Point();
   this.size = 0;
   this.speed = 0;
@@ -25,6 +26,7 @@ CharacterShot.prototype.set = function(p, size, speed){
 }
 
 CharacterShot.prototype.move = function(){
+  this.time++;
   this.position.x += this.speed;
 
   if(this.position.x > this.size + 768){
